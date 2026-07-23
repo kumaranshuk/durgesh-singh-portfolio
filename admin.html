@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Admin — Photo Manager · Durgesh Rudra Singh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500&display=swap" rel="stylesheet" />
+<style>
+:root{--navy:#0a1226;--navy2:#0d1830;--ink:#070b16;--ivory:#f4efe3;--soft:#b9c0d0;--gold:#c9a24b;
+ --line:rgba(244,239,227,.12);--ok:#3ea675;--err:#d5645a;
+ --saffron:#ff9933;--green:#138808;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--navy);color:var(--ivory);font-family:'Manrope',system-ui,sans-serif;line-height:1.5;padding-bottom:5rem}
+.bar{height:3px;background:linear-gradient(90deg,var(--saffron) 0 33.33%,#fff 33.33% 66.66%,var(--green) 66.66% 100%)}
+header{padding:2.4rem clamp(1.2rem,4vw,3rem) 1.6rem;border-bottom:1px solid var(--line)}
+header h1{font-family:'Fraunces',serif;font-weight:500;font-size:1.7rem;letter-spacing:-.01em}
+header p{color:var(--soft);font-size:.9rem;margin-top:.4rem}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(1.2rem,4vw,3rem)}
+.card{background:var(--navy2);border:1px solid var(--line);border-radius:12px;padding:1.6rem;margin-top:1.6rem}
+.card h2{font-size:1rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem}
+.card h2 .n{width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:.75rem;
+ display:flex;align-items:center;justify-content:center;font-weight:700}
+label{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin:.9rem 0 .35rem}
+input{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:8px;color:var(--ivory);
+ padding:.75rem .9rem;font-family:inherit;font-size:.92rem;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--gold)}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+@media(max-width:700px){.row{grid-template-columns:1fr}}
+.btn{background:var(--gold);color:var(--ink);border:none;border-radius:8px;padding:.72rem 1.3rem;font-weight:600;
+ font-family:inherit;font-size:.86rem;cursor:pointer;transition:transform .15s,opacity .2s}
+.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.5;cursor:default;transform:none}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ivory)}
+.btn.sm{padding:.55rem 1rem;font-size:.8rem}
+.actions{display:flex;gap:.8rem;margin-top:1.3rem;flex-wrap:wrap;align-items:center}
+.status{font-size:.85rem;margin-left:.2rem}
+.status.ok{color:var(--ok)}.status.err{color:var(--err)}.status.busy{color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.2rem;margin-top:1.4rem}
+.slot{background:var(--navy2);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.slot .thumb{aspect-ratio:16/10;background:var(--ink);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.slot .thumb img{width:100%;height:100%;object-fit:cover}
+.slot .thumb .empty{color:var(--soft);font-size:.78rem}
+.slot .meta{padding:.9rem 1rem}
+.slot .meta .lab{font-weight:600;font-size:.92rem}
+.slot .meta .grp{font-size:.7rem;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+.slot .foot{padding:0 1rem 1rem;display:flex;flex-direction:column;gap:.55rem;margin-top:auto}
+.slot input[type=file]{font-size:.78rem;color:var(--soft)}
+.slot input[type=file]::file-selector-button{background:var(--ink);color:var(--ivory);border:1px solid var(--line);
+ border-radius:6px;padding:.4rem .7rem;margin-right:.6rem;font-family:inherit;cursor:pointer}
+.slot .st{font-size:.76rem;min-height:1.1em}
+.groupttl{grid-column:1/-1;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);
+ margin-top:.6rem;padding-top:1rem;border-top:1px solid var(--line)}
+.note{font-size:.8rem;color:var(--soft);margin-top:.8rem;line-height:1.6}
+.note code{background:var(--ink);padding:.1rem .4rem;border-radius:4px;color:var(--gold);font-size:.82em}
+a{color:var(--gold)}
+.pill{display:inline-block;font-size:.7rem;padding:.2rem .6rem;border-radius:100px;border:1px solid var(--line);color:var(--soft)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="bar"></div>
+<header>
+  <div class="wrap">
+    <h1>Photo Manager</h1>
+    <p>Upload and change every photo on the website. Simple — pick a photo, click Upload. <span id="connPill" class="pill">Not connected</span></p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- STEP 1: connect -->
+  <div class="card">
+    <h2><span class="n">1</span> Connect to GitHub <span style="font-weight:400;color:var(--soft);font-size:.85rem">(one time)</span></h2>
+    <div class="row">
+      <div><label>GitHub username / owner</label><input id="owner" placeholder="e.g. anshukkumar" autocomplete="off"></div>
+      <div><label>Repository name</label><input id="repo" placeholder="e.g. durgesh-singh-portfolio" autocomplete="off"></div>
+      <div><label>Branch</label><input id="branch" placeholder="main" value="main" autocomplete="off"></div>
+    </div>
+    <label>Access token <span style="text-transform:none;letter-spacing:0">(fine-grained, Contents: Read &amp; write)</span></label>
+    <input id="token" type="password" placeholder="github_pat_..." autocomplete="off">
+    <div class="actions">
+      <button class="btn" onclick="saveCfg()">Save &amp; Connect</button>
+      <button class="btn ghost sm" onclick="toggleToken()">Show token</button>
+      <span id="cfgStatus" class="status"></span>
+    </div>
+    <div class="note">
+      Need a token? Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained tokens</a>,
+      set <b>Repository access</b> to only this repo, and under <b>Permissions → Repository → Contents</b> choose <b>Read and write</b>. Copy the token here.
+      Your token is stored only in this browser, never uploaded anywhere except GitHub's own API.
+    </div>
+  </div>
+
+  <!-- STEP 2: photos -->
+  <div class="card">
+    <h2><span class="n">2</span> Change photos</h2>
+    <p class="note" style="margin-top:0">Each card below is one photo on the website. Choose an image and click <b>Upload</b>. Large phone photos are automatically resized so the site stays fast. Changes appear on the live site within a minute.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+
+</div>
+
+<script>
+const API='https://api.github.com';
+const CFG_KEY='drs_admin_cfg';
+let cfg={owner:'',repo:'',branch:'main',token:''};
+let content={photos:{}};       // mirror of content.json in repo
+let contentSha=null;
+
+const SLOTS=[
+ {group:'Hero',key:'hero',label:'Hero background portrait'},
+ {group:'About',key:'about',label:'About portrait'},
+ {group:'Public Work',key:'work1',label:'Work I — Labour rights'},
+ {group:'Public Work',key:'work2',label:'Work II — On the ground'},
+ {group:'Public Work',key:'work3',label:'Work III — Youth'},
+ {group:'Media',key:'media_main',label:'Media — featured (large)'},
+ {group:'Media',key:'media_side1',label:'Media — rally'},
+ {group:'Media',key:'media_side2',label:'Media — dialogue'},
+ {group:'Gallery',key:'gallery1',label:'Gallery photo 1'},
+ {group:'Gallery',key:'gallery2',label:'Gallery photo 2'},
+ {group:'Gallery',key:'gallery3',label:'Gallery photo 3'},
+ {group:'Gallery',key:'gallery4',label:'Gallery photo 4'},
+ {group:'Gallery',key:'gallery5',label:'Gallery photo 5'},
+ {group:'Gallery',key:'gallery6',label:'Gallery photo 6'},
+ {group:'Gallery',key:'gallery7',label:'Gallery photo 7'},
+ {group:'Gallery',key:'gallery8',label:'Gallery photo 8'},
+ {group:'Gallery',key:'gallery9',label:'Gallery photo 9'},
+];
+
+/* ---------- config ---------- */
+function loadCfg(){
+  try{const s=JSON.parse(localStorage.getItem(CFG_KEY));if(s)cfg=Object.assign(cfg,s);}catch(e){}
+  owner.value=cfg.owner;repo.value=cfg.repo;branch.value=cfg.branch||'main';token.value=cfg.token;
+}
+function toggleToken(){token.type=token.type==='password'?'text':'password';}
+async function saveCfg(){
+  cfg={owner:owner.value.trim(),repo:repo.value.trim(),branch:(branch.value.trim()||'main'),token:token.value.trim()};
+  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+  const st=document.getElementById('cfgStatus');
+  if(!cfg.owner||!cfg.repo||!cfg.token){st.className='status err';st.textContent='Fill owner, repo and token.';return;}
+  st.className='status busy';st.textContent='Connecting…';
+  try{
+    const r=await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}`,{headers:hdr()});
+    if(!r.ok) throw new Error(r.status===404?'Repo not found (check owner/name)':r.status===401?'Bad token':('Error '+r.status));
+    st.className='status ok';st.textContent='Connected ✓';
+    document.getElementById('connPill').textContent='Connected';
+    document.getElementById('connPill').style.color='var(--ok)';
+    await loadContent();renderGrid();
+  }catch(e){st.className='status err';st.textContent=e.message;}
+}
+function hdr(){return{'Authorization':'Bearer '+cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};}
+
+/* ---------- content.json ---------- */
+async function loadContent(){
+  contentSha=null;content={photos:{}};
+  try{
+    const r=await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/contents/content.json?ref=${cfg.branch}`,{headers:hdr()});
+    if(r.ok){const j=await r.json();contentSha=j.sha;
+      const txt=decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))));
+      content=JSON.parse(txt);if(!content.photos)content.photos={};}
+  }catch(e){/* no content.json yet — will be created on first upload */}
+}
+async function saveContent(){
+  const body=JSON.stringify(content,null,2);
+  const b64=btoa(unescape(encodeURIComponent(body)));
+  const payload={message:'admin: update content.json',content:b64,branch:cfg.branch};
+  if(contentSha)payload.sha=contentSha;
+  const r=await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/contents/content.json`,
+    {method:'PUT',headers:hdr(),body:JSON.stringify(payload)});
+  if(!r.ok) throw new Error('Could not save content.json ('+r.status+')');
+  const j=await r.json();contentSha=j.content.sha;
+}
+
+/* ---------- resize + upload ---------- */
+function resize(file,maxW){return new Promise((res,rej)=>{
+  const img=new Image();const url=URL.createObjectURL(file);
+  img.onload=()=>{URL.revokeObjectURL(url);
+    let w=img.width,h=img.height;
+    if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    res(c.toDataURL('image/jpeg',0.84).split(',')[1]);
+  };img.onerror=()=>rej(new Error('Not a valid image'));img.src=url;
+});}
+
+async function getSha(path){
+  try{const r=await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/contents/${path}?ref=${cfg.branch}`,{headers:hdr()});
+    if(r.ok){return (await r.json()).sha;}}catch(e){}
+  return null;
+}
+
+async function upload(slot){
+  const input=document.getElementById('file-'+slot);
+  const st=document.getElementById('st-'+slot);
+  if(!cfg.token){st.className='st err';st.textContent='Connect first (step 1).';return;}
+  if(!input.files||!input.files[0]){st.className='st err';st.textContent='Choose a photo first.';return;}
+  st.className='st busy';st.textContent='Resizing…';
+  try{
+    const maxW=slot==='hero'||slot==='media_main'?2000:1400;
+    const b64=await resize(input.files[0],maxW);
+    st.textContent='Uploading…';
+    const path='assets/'+slot+'.jpg';
+    const sha=await getSha(path);
+    const payload={message:'admin: update photo '+slot,content:b64,branch:cfg.branch};
+    if(sha)payload.sha=sha;
+    const r=await fetch(`${API}/repos/${cfg.owner}/${cfg.repo}/contents/${path}`,
+      {method:'PUT',headers:hdr(),body:JSON.stringify(payload)});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||('Upload failed '+r.status));}
+    content.photos[slot]={src:path,v:Date.now()};
+    st.textContent='Saving…';
+    await saveContent();
+    st.className='st ok';st.textContent='Uploaded ✓ live shortly';
+    document.getElementById('thumb-'+slot).innerHTML='<img src="data:image/jpeg;base64,'+b64+'">';
+  }catch(e){st.className='st err';st.textContent=e.message;}
+}
+
+/* ---------- grid ---------- */
+function renderGrid(){
+  const g=document.getElementById('grid');g.innerHTML='';
+  let curGroup='';
+  SLOTS.forEach(s=>{
+    if(s.group!==curGroup){curGroup=s.group;
+      const t=document.createElement('div');t.className='groupttl';t.textContent=s.group;g.appendChild(t);}
+    const saved=content.photos&&content.photos[s.key];
+    const el=document.createElement('div');el.className='slot';
+    el.innerHTML=`
+      <div class="thumb" id="thumb-${s.key}">${saved&&saved.src?`<img src="rawurl">`:'<span class="empty">No photo yet — placeholder shown on site</span>'}</div>
+      <div class="meta"><div class="grp">${s.group}</div><div class="lab">${s.label}</div></div>
+      <div class="foot">
+        <input type="file" id="file-${s.key}" accept="image/*">
+        <button class="btn sm" onclick="upload('${s.key}')">Upload</button>
+        <div class="st" id="st-${s.key}"></div>
+      </div>`;
+    g.appendChild(el);
+    if(saved&&saved.src){
+      const raw=`https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${saved.src}?v=${saved.v||1}`;
+      el.querySelector('img').src=raw;
+    }
+  });
+}
+
+/* init */
+loadCfg();
+if(cfg.owner&&cfg.repo&&cfg.token){saveCfg();}
+else{renderGrid();}
+</script>
+</body>
+</html>
