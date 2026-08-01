@@ -19,6 +19,10 @@
     "work2": {
       "src": "assets/work2.jpg",
       "v": 1785590693123
+    },
+    "media_side1": {
+      "src": "assets/media_side1.jpg",
+      "v": 1785590774897
     }
   }
 }
