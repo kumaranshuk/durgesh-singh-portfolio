@@ -59,6 +59,10 @@
     "gallery3": {
       "src": "assets/gallery3.jpg",
       "v": 1785591766724
+    },
+    "media_main": {
+      "src": "assets/media_main.jpg",
+      "v": 1785591809528
     }
   }
 }
