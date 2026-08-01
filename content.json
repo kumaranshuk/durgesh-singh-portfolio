@@ -7,6 +7,10 @@
     "work1": {
       "src": "assets/work1.jpg",
       "v": 1785590158051
+    },
+    "hero": {
+      "src": "assets/hero.jpg",
+      "v": 1785590301186
     }
   }
 }
