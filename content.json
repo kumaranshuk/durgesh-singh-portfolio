@@ -3,6 +3,10 @@
     "about": {
       "src": "assets/about.jpg",
       "v": 1784844081043
+    },
+    "work1": {
+      "src": "assets/work1.jpg",
+      "v": 1785590158051
     }
   }
 }
