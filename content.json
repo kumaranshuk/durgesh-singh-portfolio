@@ -11,6 +11,10 @@
     "hero": {
       "src": "assets/hero.jpg",
       "v": 1785590301186
+    },
+    "work3": {
+      "src": "assets/work3.jpg",
+      "v": 1785590643109
     }
   }
 }
